@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+       	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+       	http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd">
+    <context:component-scan base-package="com.jaspersoft.ji.ws.rest, com.jaspersoft.ji.jaxrs, com.jaspersoft.ji.adhoc.rest">
+        <!-- you can exclude here some services if you want: -->
+    </context:component-scan>
+
+	<context:component-scan base-package="com.jaspersoft.ji.jaxrs.ps.testservice"/>
+	
+    <bean id="restServiceRegistryPRO" class="com.jaspersoft.jasperserver.rest.MapRESTServiceRegistry"
+          parent="restServiceRegistryCE">
+        <property name="services">
+            <map merge="true">
+                <entry key="user" value-ref="restMTUser"/>
+                <entry key="organization" value-ref="restOrganization"/>
+                <entry key="jobsummary" value-ref="proJobSummary"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="Test" class="com.jaspersoft.ji.jaxrs.ps.testservice.TestServiceImpl"/>
+
+    <util:map id="rolesThatCanCreateModifyResources" key-type="java.lang.String" value-type="java.util.List">
+        <entry key="com.jaspersoft.commons.semantic.DataDefinerUnit">
+            <list>
+                <value>ROLE_SUPERUSER</value>
+                <value>ROLE_ADMINISTRATOR</value>
+            </list>
+        </entry>
+        <entry key="com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource">
+            <list>
+                <value>ROLE_SUPERUSER</value>
+                <value>ROLE_ADMINISTRATOR</value>
+            </list>
+        </entry>
+    </util:map>
+
+    <bean id="publicOrganizationName" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="organizations"/>
+    </bean>
+
+    <util:set id="publicRoles">
+        <value>ROLE_ADMINISTRATOR</value>
+        <value>ROLE_USER</value>
+        <value>ROLE_ANONYMOUS</value>
+        <value>ROLE_DEMO</value>
+        <value>ROLE_SUPERMART_MANAGER</value>
+    </util:set>
+
+    <bean id="modifyProtectedPro" class="java.util.HashSet" parent="modifyProtectedCe">
+        <constructor-arg index="0" type="java.util.Collection">
+            <set merge="true">
+                <value>/public</value>
+                <value>.*/organizations</value>
+                <value>.*/organizations/[^/]+</value>
+                <value>.*/organizations/org_template/[^/]+</value>
+                <value>.*/organizations/[^/]+/adhoc</value>
+                <value>.*/organizations/[^/]+/adhoc/topics</value>
+                <value>.*/organizations/[^/]+/temp</value>
+                <value>.*/organizations/[^/]+/themes</value>
+                <value>.*/organizations/[^/]+/themes/default</value>
+                <value>.*/organizations/[^/]+/themes/default/.+</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="foldersOnlyPro" class="java.util.HashSet" parent="foldersOnlyCe">
+        <constructor-arg index="0" type="java.util.Collection">
+            <set merge="true">
+                <value>.*/organizations/[^/]+</value>
+                <value>.*/organizations/org_template/[^/]+</value>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="queryLanguagesPro" parent="queryLanguagesCe" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list merge="true">
+                <value>sl</value>
+            </list>
+        </property>
+    </bean>
+    <!-- metadataServiceFunctionFilter is a bean name that the MetadataService looks for to filter functions.
+    	 by default, it just points to domELMetadataHelper which provides a default filter.
+    	 you can override it to change the way things are filtered.
+      -->
+    <alias name="domELMetadataHelper" alias="metadataServiceFunctionFilter"/>
+
+    <!--
+        Set of supported DtaSource types which can be used to create Domain using rest (v1) services
+    -->
+    <util:set id="supportedSchemaDataSources">
+        <value>jdbc</value>
+        <value>jndi</value>
+        <!--<value>custom</value>-->
+        <!--<value>virtual</value>-->
+        <!--<value>bean</value>-->
+        <!--<value>aws</value>-->
+    </util:set>
+
+    <util:map id="copyMoveStrategiesPro">
+        <entry key="com.jaspersoft.ji.dashboard.DashboardModelResource" value-ref="copyMoveToDashboardStrategy"/>
+    </util:map>
+
+    <bean id="mtPermissionsRecipientIdentityResolver" parent="permissionsRecipientIdentityResolver"
+          class="com.jaspersoft.ji.remote.helpers.MTRecipientIdentityResolver">
+    </bean>
+
+    <bean id="mtAttributesRecipientIdentityResolver" parent="attributesRecipientIdentityResolver"
+          class="com.jaspersoft.ji.remote.helpers.MTRecipientIdentityResolver">
+    </bean>
+
+
+</beans>
