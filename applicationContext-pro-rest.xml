@@ -15,6 +15,11 @@
 
 	<context:component-scan base-package="com.jaspersoft.ji.jaxrs.ps.testservice"/>
 	
+	<bean id="Test" class="com.jaspersoft.ji.jaxrs.ps.testservice.TestServiceImpl"/>
+	
+	<bean id="TestJaxrsService" class="com.jaspersoft.ji.jaxrs.ps.testservice.Test">
+    </bean>
+	
     <bean id="restServiceRegistryPRO" class="com.jaspersoft.jasperserver.rest.MapRESTServiceRegistry"
           parent="restServiceRegistryCE">
         <property name="services">
@@ -25,8 +30,6 @@
             </map>
         </property>
     </bean>
-
-    <bean id="Test" class="com.jaspersoft.ji.jaxrs.ps.testservice.TestServiceImpl"/>
 
     <util:map id="rolesThatCanCreateModifyResources" key-type="java.lang.String" value-type="java.util.List">
         <entry key="com.jaspersoft.commons.semantic.DataDefinerUnit">

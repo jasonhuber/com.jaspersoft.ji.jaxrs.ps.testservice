@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
  * @version $Id: Test.java 	$
  */
 @Component
-@Path("/tests")
+@Path("/test")
 public class Test extends RemoteServiceWrapper<TestService> {
     @Context
     private HttpServletRequest servletRequest;
